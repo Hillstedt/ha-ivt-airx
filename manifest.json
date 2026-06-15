@@ -1,0 +1,10 @@
+{
+  "domain": "ivt_airx",
+  "name": "IVT AirX Heat Pump",
+  "config_flow": true,
+  "documentation": "https://github.com/rasmus/ivt-airx-ha",
+  "requirements": [],
+  "codeowners": [],
+  "iot_class": "cloud_polling",
+  "version": "0.1.0"
+}

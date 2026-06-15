@@ -1,0 +1,24 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IVT AirX Heat Pump — Log in",
+        "description": "**Step 1:** Open this URL in a browser and log in with your SingleKey ID (Bosch/IVT account):\n\n{authorization_url}\n\n**Step 2:** After login, the browser will try to open an app-link and show an error — that is expected. Copy the full URL from the address bar and paste it below.",
+        "data": {
+          "redirect_url": "Redirect URL (from browser address bar after login)",
+          "gateway_id": "Gateway ID (optional — leave blank for auto-discovery)"
+        }
+      }
+    },
+    "error": {
+      "invalid_code": "Could not find an authorization code in the pasted URL. Make sure you copied the full address-bar URL after login.",
+      "invalid_auth": "Authentication failed. The login may have expired — please try again.",
+      "cannot_connect": "Could not reach the Bosch PoinTT API. Check your internet connection.",
+      "no_gateway": "Login succeeded but no heat pump gateway was found on this account.",
+      "no_refresh_token": "The login did not return a refresh token. Please try again."
+    },
+    "abort": {
+      "already_configured": "This gateway is already configured."
+    }
+  }
+}
