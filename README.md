@@ -1,6 +1,21 @@
 # IVT AirX Home Assistant Integration
 
+> ⚠️ **Early / experimental — read the disclaimers below before installing.**
+
 A read-only Home Assistant custom integration for the **IVT AirX 407** (and other Bosch Thermotechnology heat pumps using the K30 WiFi module) via the Bosch PoinTT cloud API.
+
+## Status & disclaimers
+
+**Read-only, Phase 1.** This integration only exposes sensor data — it cannot control the heat pump. Thermostat, hot water, and scheduling control are planned for a later phase.
+
+**Vibe coded.** This integration was built with AI assistance (Claude) in a single session by someone who wanted their heat pump in Home Assistant. It works on one IVT AirX 407, but it has not been formally reviewed, broadly tested across devices, or hardened for production use. Treat it accordingly:
+
+- It may break if Bosch changes their API or auth flow
+- It has not been tested on hardware other than an IVT AirX 407
+- There are no automated tests
+- PRs, bug reports, and real-world feedback are very welcome
+
+**No affiliation.** This project is not affiliated with IVT, Bosch, or Buderus in any way. It reverse-engineers a private cloud API for personal use.
 
 ## What it does
 
