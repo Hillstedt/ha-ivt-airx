@@ -3,16 +3,16 @@
     "step": {
       "user": {
         "title": "IVT AirX Heat Pump — Log in",
-        "description": "**Step 1:** Open this URL in a browser and log in with your SingleKey ID (Bosch/IVT account):\n\n{authorization_url}\n\n**Step 2:** After login, the browser will try to open an app-link and show an error — that is expected. Copy the full URL from the address bar and paste it below.",
+        "description": "**Step 1:** Open this URL in a browser and log in with your SingleKey ID (Bosch/IVT account):\n\n`{authorization_url}`\n\n**Step 2:** After login, Chrome will stay on a `singlekey-id.com` page — that is normal. Press **Ctrl+U** (View Page Source), then press **Ctrl+F** and search for `code=`. Copy the long code value that appears after `code=` (stop at the `&`). Paste only that code value below.\n\n*(Firefox users: the `com.bosch.tt.dashtt.pointt://...` URL appears in the address bar — copy the whole URL instead.)*",
         "data": {
-          "redirect_url": "Redirect URL (from browser address bar after login)",
+          "redirect_url": "Authorization code (or full redirect URL)",
           "gateway_id": "Gateway ID (optional — leave blank for auto-discovery)"
         }
       }
     },
     "error": {
-      "invalid_code": "Could not find an authorization code in the pasted URL. Make sure you copied the full address-bar URL after login.",
-      "invalid_auth": "Authentication failed. The login may have expired — please try again.",
+      "invalid_code": "No authorization code found. Check the page source (Ctrl+U on the singlekey-id.com page after login) and search for 'code=' — paste only the code value.",
+      "invalid_auth": "Authentication failed — the code may have expired (codes last ~60 seconds). Restart the flow and paste the code quickly.",
       "cannot_connect": "Could not reach the Bosch PoinTT API. Check your internet connection.",
       "no_gateway": "Login succeeded but no heat pump gateway was found on this account.",
       "no_refresh_token": "The login did not return a refresh token. Please try again."

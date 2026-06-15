@@ -46,27 +46,34 @@ def build_authorization_url(code_verifier: str, state: str) -> str:
 
 
 def extract_code_from_redirect(redirect_url: str, expected_state: str | None = None) -> str:
-    """Pull the authorization code out of the redirect URL (or bare code) the user pastes.
+    """Extract the authorization code from whatever the user pastes.
 
-    Accepts:
-      - Full redirect URI:  com.bosch.tt.dashtt.pointt://app/login?code=XXX&state=YYY
-      - Browser error page URL that contains code= in the query string
-      - Bare authorization code (if the user only copies the code value)
+    Accepts (in order of preference):
+      1. Full redirect URI:  com.bosch.tt.dashtt.pointt://app/login?code=XXX&state=YYY
+      2. Any URL containing code= in the query string or fragment
+      3. A bare authorization code copied from the page source
 
-    Raises ValueError on auth errors or state mismatch.
+    On Chrome, the redirect to the custom app scheme is silent — the code appears
+    in the page source of the singlekey-id.com callback page.  Users are instructed
+    to do Ctrl+U → search "code=" → paste the bare code value here.
+
+    Raises ValueError on auth errors, state mismatch, or unparseable input.
     """
     value = redirect_url.strip()
 
-    # If it looks like a URL, parse it
-    if "://" in value or value.startswith("http"):
+    # ── URL path: anything that looks like a URL ──────────────────────────────
+    if "://" in value or value.startswith("http") or value.startswith("?"):
+        # Normalise: if user pasted just the query string (e.g. "?code=X&state=Y")
+        if value.startswith("?"):
+            value = "https://x/" + value
+
         parsed = urlparse(value)
-        # query may be empty for custom schemes; try fragment too
         raw = parsed.query or parsed.fragment
         params = parse_qs(raw)
 
         if "error" in params:
             desc = params.get("error_description", params["error"])[0]
-            raise ValueError(f"OAuth error: {desc}")
+            raise ValueError(f"OAuth error from server: {desc}")
 
         if expected_state:
             got_state = params.get("state", [None])[0]
@@ -74,12 +81,18 @@ def extract_code_from_redirect(redirect_url: str, expected_state: str | None = N
                 raise ValueError("OAuth state mismatch — please restart the login flow")
 
         code = params.get("code", [None])[0]
-        if not code:
-            raise ValueError("No authorization code found in the redirect URL")
-        return code
+        if code:
+            return code
+        raise ValueError("No authorization code found in the URL")
 
-    # Assume the user pasted just the raw code
-    if len(value) > 10:
+    # ── Bare code path: user copied just the code value from the page source ──
+    # OAuth2 authorization codes are typically 20+ characters of base64url.
+    # Reject very short strings to catch obvious mistakes (e.g. pasting the URL
+    # field label or a single word).
+    if len(value) >= 20 and " " not in value and "\n" not in value:
         return value
 
-    raise ValueError("Could not find an authorization code in the pasted value")
+    raise ValueError(
+        "Paste the authorization code from the page source (Ctrl+U → search 'code='), "
+        "or the full redirect URL if your browser showed one."
+    )
