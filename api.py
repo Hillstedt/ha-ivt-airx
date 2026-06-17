@@ -91,9 +91,15 @@ class IVTAirXApi:
             "client_id": OAUTH_CLIENT_ID,
             "refresh_token": self._refresh_token,
         }
-        async with self._session.post(
-            OAUTH_TOKEN_URL, data=data, headers=self._default_headers(auth=False)
-        ) as resp:
+        # Token endpoint requires form-encoded body, not JSON.
+        # _default_headers() sets Content-Type: application/json (correct for
+        # PoinTT resource calls) so we use explicit headers here instead.
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": POINTT_USER_AGENT,
+        }
+        async with self._session.post(OAUTH_TOKEN_URL, data=data, headers=headers) as resp:
             body = await resp.text()
             if resp.status in (400, 401, 403):
                 raise AirXAuthError(f"Token refresh rejected ({resp.status}): {body}")
